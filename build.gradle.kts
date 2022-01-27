@@ -43,17 +43,6 @@ dependencies {
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 
 }
-//
-//tasks.named("test") {
-//    outputs.dir snippetsDir
-//    useJUnitPlatform()
-//}
-//
-//tasks.named("asciidoctor") {
-//    inputs.dir snippetsDir
-//    dependsOn test
-//}
-
 
 tasks.withType<Test> {
     useJUnitPlatform()
