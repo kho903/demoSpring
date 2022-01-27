@@ -1,54 +1,46 @@
 package com.example.bancowdemo.qna.controller;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.example.bancowdemo.TestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(RestDocumentationExtension.class)
-class QnaApiControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @BeforeEach
-    void setUp(
-            final WebApplicationContext context,
-            final RestDocumentationContextProvider provider
-    ) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(MockMvcRestDocumentation.documentationConfiguration(provider))
-                .build();
-    }
+class QnaApiControllerTest extends TestSupport {
 
     @Test
     void getQna() throws Exception {
         mockMvc.perform(
                 get("/api/qna/{id}", 1L)
-                    .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
         )
-                .andDo(print())
-                .andDo(MockMvcRestDocumentation.document("{class-name}/{method-name}"))
                 .andExpect(status().isOk())
-        ;
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("id").description("QnA의 id")
+                                ),
+                                responseFields(
+                                        fieldWithPath("data").description("결과 데이터"),
+                                        fieldWithPath("data.id").description("아이디"),
+                                        fieldWithPath("data.category").description("문의 카테고리 (제휴, 투자, 기타)"),
+                                        fieldWithPath("data.phoneNumber").description("전화번호"),
+                                        fieldWithPath("data.email").description("이메일"),
+                                        fieldWithPath("data.title").description("제목"),
+                                        fieldWithPath("data.message").description("메시지"),
+                                        fieldWithPath("data.checked").description("동의 여부"),
+                                        fieldWithPath("data.createDate").description("문의 날짜"),
+                                        fieldWithPath("status").description("HTTP Status")
+                                )
+                        )
+                );
     }
 
     @Test
@@ -57,9 +49,23 @@ class QnaApiControllerTest {
                 get("/api/qna/allqna")
                         .contentType(MediaType.APPLICATION_JSON)
         )
-                .andDo(print())
-                .andDo(MockMvcRestDocumentation.document("{class-name}/{method-name}"))
                 .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                responseFields(
+                                        fieldWithPath("data").description("결과 데이터"),
+                                        fieldWithPath("data[0].id").description("아이디"),
+                                        fieldWithPath("data[0].category").description("문의 카테고리 (제휴, 투자, 기타)"),
+                                        fieldWithPath("data[0].phoneNumber").description("전화번호"),
+                                        fieldWithPath("data[0].email").description("이메일"),
+                                        fieldWithPath("data[0].title").description("제목"),
+                                        fieldWithPath("data[0].message").description("메시지"),
+                                        fieldWithPath("data[0].checked").description("동의 여부"),
+                                        fieldWithPath("data[0].createDate").description("문의 날짜"),
+                                        fieldWithPath("status").description("HTTP Status")
+                                )
+                        )
+                )
         ;
     }
 
@@ -70,17 +76,26 @@ class QnaApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("" +
                                 "{\n" +
-                                "  \"category\": \"농가입점\",\n" +
-                                "  \"phoneNumber\": \"010-1010-0101\",\n" +
-                                "  \"email\": \"a@naver.com\",\n" +
-                                "  \"title\": \"아아\",\n" +
-                                "  \"message\": \"아아\",\n" +
+                                "  \"category\": \"투자문의\",\n" +
+                                "  \"phoneNumber\": \"010-2146-0894\",\n" +
+                                "  \"email\": \"gmldnr2222@naver.com\",\n" +
+                                "  \"title\": \"안녕하세요. 투자 관련 문의입니다.\",\n" +
+                                "  \"message\": \"투자 관련 해서 미팅하고 싶습니다. 연락주세요\",\n" +
                                 "  \"checked\": true\n" +
                                 "}")
         )
-                .andDo(print())
-                .andDo(MockMvcRestDocumentation.document("{class-name}/{method-name}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                responseFields(
+                                        fieldWithPath("data").description("결과 데이터"),
+                                        fieldWithPath("data.result").description("QnA 추가 request 성공 여부"),
+                                        fieldWithPath("data.message").description("response 메시지"),
+                                        fieldWithPath("status").description("HTTP Status")
+                                )
+                        )
+                )
+        ;
     }
 
     @Test
@@ -89,8 +104,17 @@ class QnaApiControllerTest {
                 delete("/api/qna/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
         )
-                .andDo(print())
-                .andDo(MockMvcRestDocumentation.document("{class-name}/{method-name}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                responseFields(
+                                        fieldWithPath("data").description("결과 데이터"),
+                                        fieldWithPath("data.result").description("QnA 삭제 request 성공 여부"),
+                                        fieldWithPath("data.message").description("response 메시지"),
+                                        fieldWithPath("status").description("HTTP Status")
+                                )
+                        )
+                )
+        ;
     }
 }
