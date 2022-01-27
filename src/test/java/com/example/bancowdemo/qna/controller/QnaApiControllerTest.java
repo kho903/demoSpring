@@ -117,4 +117,38 @@ class QnaApiControllerTest extends TestSupport {
                 )
         ;
     }
+
+    @Test
+    void addQna_invalid() throws Exception {
+        mockMvc.perform(
+                post("/api/qna/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("" +
+                                "{\n" +
+                                "  \"category\": \"\",\n" +
+                                "  \"phoneNumber\": \"010-2146-0894\",\n" +
+                                "  \"email\": \"gmldnr2222.naver.com\",\n" +
+                                "  \"title\": \"안녕하세요. 투자 관련 문의입니다.\",\n" +
+                                "  \"message\": \"투자 관련 해서 미팅하고 싶습니다. 연락주세요\",\n" +
+                                "  \"checked\": true\n" +
+                                "}")
+        )
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                responseFields(
+                                        fieldWithPath("message").description("에러 메시지"),
+                                        fieldWithPath("status").description("상태 코드"),
+                                        fieldWithPath("errors").description("에러 데이터"),
+                                        fieldWithPath("errors[0].field").description("에러가 발생한 필드"),
+                                        fieldWithPath("errors[0].value").description("에러가 발생한 값"),
+                                        fieldWithPath("errors[0].message").description("에러 메시지 상세"),
+                                        fieldWithPath("code").description("에러 코드"),
+                                        fieldWithPath("timeStamp").description("HTTP Status")
+                                )
+                        )
+                )
+        ;
+    }
+
 }

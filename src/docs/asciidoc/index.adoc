@@ -7,69 +7,96 @@ Bancow;
 :toclevels: 2
 :sectlinks:
 
+[[overview-http-status-code]]
+== Overview
+=== Http Status Code
+
+|===
+| Status code | Error Code | Usage
+
+| `200 OK`
+| X
+| successfully
+
+| `400 Bad Request`
+| C001
+| Bad Request
+
+| `500 Internal Server Error`
+| C004
+| Server Error
+|===
+
+[[overview-error-response]]
+=== Http Error Response
+include::{snippets}/qna-api-controller-test/add-qna_invalid/response-body.adoc[]
+=== Response Fields
+include::{snippets}/qna-api-controller-test/add-qna_invalid/response-fields.adoc[]
+
+
 [[QnA-API]]
 == QnA API
 
 [[QnA-추가]]
 === QnA 추가
-==== curl request
+==== Curl Request
 include::{snippets}/qna-api-controller-test/add-qna/curl-request.adoc[]
-==== Http request
+==== Http Request
 include::{snippets}/qna-api-controller-test/add-qna/http-request.adoc[]
-==== Http response
+==== Http Response
 include::{snippets}/qna-api-controller-test/add-qna/http-response.adoc[]
-==== Httpie request
+==== Httpie Request
 include::{snippets}/qna-api-controller-test/add-qna/httpie-request.adoc[]
-==== request body
+==== Request Body
 include::{snippets}/qna-api-controller-test/add-qna/request-body.adoc[]
-==== response body
+==== Response Body
 include::{snippets}/qna-api-controller-test/add-qna/response-body.adoc[]
-==== response Fields
+==== Response Fields
 include::{snippets}/qna-api-controller-test/add-qna/response-fields.adoc[]
 
 [[QnA-삭제]]
 === QnA 삭제
-==== curl request
+==== Curl Request
 include::{snippets}/qna-api-controller-test/delete-qna/curl-request.adoc[]
-==== Http request
+==== Http Request
 include::{snippets}/qna-api-controller-test/delete-qna/http-request.adoc[]
-==== Http response
+==== Http Response
 include::{snippets}/qna-api-controller-test/delete-qna/http-response.adoc[]
-==== Httpie request
+==== Httpie Request
 include::{snippets}/qna-api-controller-test/delete-qna/httpie-request.adoc[]
-==== response body
+==== Response Body
 include::{snippets}/qna-api-controller-test/delete-qna/response-body.adoc[]
-==== response Fields
+==== Response Fields
 include::{snippets}/qna-api-controller-test/delete-qna/response-fields.adoc[]
 
 [[QnA-전체-조회]]
 === QnA 전체 조회
-==== curl request
+==== Curl Request
 include::{snippets}/qna-api-controller-test/get-all-qna/curl-request.adoc[]
-==== Http request
+==== Http Request
 include::{snippets}/qna-api-controller-test/get-all-qna/http-request.adoc[]
-==== Http response
+==== Http Response
 include::{snippets}/qna-api-controller-test/get-all-qna/http-response.adoc[]
-==== Httpie request
+==== Httpie Request
 include::{snippets}/qna-api-controller-test/get-all-qna/httpie-request.adoc[]
-==== response body
+==== Response Body
 include::{snippets}/qna-api-controller-test/get-all-qna/response-body.adoc[]
-==== response Fields
+==== Response Fields
 include::{snippets}/qna-api-controller-test/get-all-qna/response-fields.adoc[]
 
 [[QnA-단일-조회]]
 === QnA 단일 조회
-==== Path parameters
+==== Path Parameters
 include::{snippets}/qna-api-controller-test/get-qna/path-parameters.adoc[]
-==== curl request
+==== Curl Request
 include::{snippets}/qna-api-controller-test/get-qna/curl-request.adoc[]
-==== Http request
+==== Http Request
 include::{snippets}/qna-api-controller-test/get-qna/http-request.adoc[]
-==== Http response
+==== Http Response
 include::{snippets}/qna-api-controller-test/get-qna/http-response.adoc[]
-==== Httpie request
+==== Httpie Request
 include::{snippets}/qna-api-controller-test/get-qna/httpie-request.adoc[]
-==== response body
+==== Response Body
 include::{snippets}/qna-api-controller-test/get-qna/response-body.adoc[]
-==== response Fields
+==== Response Fields
 include::{snippets}/qna-api-controller-test/get-qna/response-fields.adoc[]
