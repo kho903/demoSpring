@@ -1,0 +1,47 @@
+= REST Docs
+Andy Wilkinson;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[QNA-API]]
+== QNA API
+
+[[QNA-추가]]
+=== QNA 추가
+include::{snippets}/qna-api-controller-test/add-qna/curl-request.adoc[]
+include::{snippets}/qna-api-controller-test/add-qna/http-request.adoc[]
+include::{snippets}/qna-api-controller-test/add-qna/http-response.adoc[]
+include::{snippets}/qna-api-controller-test/add-qna/httpie-request.adoc[]
+include::{snippets}/qna-api-controller-test/add-qna/request-body.adoc[]
+include::{snippets}/qna-api-controller-test/add-qna/response-body.adoc[]
+
+[[QNA-삭제]]
+=== QNA 삭제
+include::{snippets}/qna-api-controller-test/delete-qna/curl-request.adoc[]
+include::{snippets}/qna-api-controller-test/delete-qna/http-request.adoc[]
+include::{snippets}/qna-api-controller-test/delete-qna/http-response.adoc[]
+include::{snippets}/qna-api-controller-test/delete-qna/httpie-request.adoc[]
+include::{snippets}/qna-api-controller-test/delete-qna/request-body.adoc[]
+include::{snippets}/qna-api-controller-test/delete-qna/response-body.adoc[]
+
+[[QNA-전체-조회]]
+=== QNA 전체 조회
+include::{snippets}/qna-api-controller-test/get-all-qna/curl-request.adoc[]
+include::{snippets}/qna-api-controller-test/get-all-qna/http-request.adoc[]
+include::{snippets}/qna-api-controller-test/get-all-qna/http-response.adoc[]
+include::{snippets}/qna-api-controller-test/get-all-qna/httpie-request.adoc[]
+include::{snippets}/qna-api-controller-test/get-all-qna/request-body.adoc[]
+include::{snippets}/qna-api-controller-test/get-all-qna/response-body.adoc[]
+
+[[QNA-단일-조회]]
+=== QNA 단일 조회
+include::{snippets}/qna-api-controller-test/get-qna/curl-request.adoc[]
+include::{snippets}/qna-api-controller-test/get-qna/http-request.adoc[]
+include::{snippets}/qna-api-controller-test/get-qna/http-response.adoc[]
+include::{snippets}/qna-api-controller-test/get-qna/httpie-request.adoc[]
+include::{snippets}/qna-api-controller-test/get-qna/request-body.adoc[]
+include::{snippets}/qna-api-controller-test/get-qna/response-body.adoc[]
