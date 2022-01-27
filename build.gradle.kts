@@ -15,6 +15,13 @@ configurations {
     }
 }
 
+lateinit var asciidoctorExt: Configuration
+val snippetsDir = file("build/generated-snippets")
+
+asciidoctorj {
+    asciidoctorExt = configurations.create("asciidoctorExt")
+}
+
 repositories {
     mavenCentral()
 }
@@ -26,11 +33,15 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.springframework.boot:spring-boot-starter-validation"
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+
 }
 
 tasks.named('test') {
@@ -41,4 +52,25 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
+}
+
+tasks.bootJar {
+    dependsOn(tasks.asciidoctor)
+    from("${tasks.asciidoctor.get().outputDir}") {
+        into("static/docs")
+    }
+}
+
+tasks.test {
+    outputs.dir(snippetsDir)
+}
+
+tasks.asciidoctor {
+    dependsOn(tasks.test)
+    val snippets = file("build/generated-snippets")
+    configurations("asciidoctorExt")
+    attributes["snippets"] = snippets
+    inputs.dir(snippets)
+    sources { include("**/index.adoc") }
+    baseDirFollowsSourceFile()
 }
