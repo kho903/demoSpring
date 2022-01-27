@@ -5,12 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.time.LocalDateTime;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -18,16 +15,22 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class QnaInput {
 
+    @NotEmpty
     private String category;
 
+    @NotEmpty
     private String phoneNumber;
 
+    @Email
+    @NotEmpty
     private String email;
 
+    @NotEmpty
     private String title;
 
+    @NotEmpty
     private String message;
 
+    @NotNull
     private boolean checked;
-
 }

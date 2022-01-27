@@ -18,7 +18,12 @@ public class QnaService {
     private final QnaRepository qnaRepository;
 
     public Qna getQna(Long qnaId) {
-        return qnaRepository.findById(qnaId).get();
+        Optional<Qna> optionalQna = qnaRepository.findById(qnaId);
+        if (!optionalQna.isPresent()) {
+            return null;
+        }
+        Qna qna = optionalQna.get();
+        return qnaRepository.save(qna);
     }
 
     public List<Qna> getAllQna() {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,6 +27,9 @@ public class QnaApiController {
     @GetMapping("/{id}")
     public Response<?> getQna(@PathVariable Long id) {
         Qna qna = qnaService.getQna(id);
+        if (qna == null) {
+            return new Response<>(null, HttpStatus.BAD_REQUEST);
+        }
         return new Response<>(qna, HttpStatus.OK);
     }
 
@@ -36,7 +40,7 @@ public class QnaApiController {
     }
 
     @PostMapping("/add")
-    public Response<?> addQna(@RequestBody QnaInput qnaInput) {
+    public Response<?> addQna(@RequestBody @Valid QnaInput qnaInput) {
         ServiceResult result = qnaService.addQna(qnaInput);
         return new Response<>(result, HttpStatus.OK);
     }
