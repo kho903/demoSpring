@@ -49,6 +49,8 @@ include::{snippets}/qna-api-controller-test/add-qna/http-response.adoc[]
 include::{snippets}/qna-api-controller-test/add-qna/httpie-request.adoc[]
 ==== Request Body
 include::{snippets}/qna-api-controller-test/add-qna/request-body.adoc[]
+==== Request Fields
+include::{snippets}/qna-api-controller-test/add-qna/request-fields.adoc[]
 ==== Response Body
 include::{snippets}/qna-api-controller-test/add-qna/response-body.adoc[]
 ==== Response Fields

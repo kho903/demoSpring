@@ -8,6 +8,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -87,6 +88,14 @@ class QnaApiControllerTest extends TestSupport {
                 .andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
+                                requestFields(
+                                        fieldWithPath("category").description("카테고리"),
+                                        fieldWithPath("phoneNumber").description("전화번호"),
+                                        fieldWithPath("email").description("이메일"),
+                                        fieldWithPath("title").description("제목"),
+                                        fieldWithPath("message").description("메시지"),
+                                        fieldWithPath("checked").description("checked")
+                                ),
                                 responseFields(
                                         fieldWithPath("data").description("결과 데이터"),
                                         fieldWithPath("data.result").description("QnA 추가 request 성공 여부"),
