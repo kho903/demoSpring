@@ -8,7 +8,9 @@ import com.example.bancowdemo.adminuser.model.UserLoginInput;
 import com.example.bancowdemo.adminuser.model.UserLoginToken;
 import com.example.bancowdemo.adminuser.service.ApiAdminUserService;
 import com.example.bancowdemo.qna.ServiceResult;
+import com.example.bancowdemo.response.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +31,8 @@ public class ApiAdminUserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Valid UserInput userInput) {
         ServiceResult result = apiAdminUserService.registerUser(userInput);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok().body(new Response<>(result, HttpStatus.OK));
+        // json body를 맞추기 위해 다음과 같이 하였습니다. (return new Response<>(result, HttpStatus.OK); -> 왜 인지 404 오류.
     }
 
     @PostMapping("/login")
@@ -44,8 +47,8 @@ public class ApiAdminUserController {
                 .withClaim("user_id", user.getId())
                 .withSubject(user.getUsername())
                 .withIssuer(user.getEmail())
-                .sign(Algorithm.HMAC512("bancowAlhorithm".getBytes()));
+                .sign(Algorithm.HMAC512("bancowAlgorithm".getBytes()));
 
-        return ResponseEntity.ok().body(UserLoginToken.builder().token(token).build());
+        return ResponseEntity.ok().body(new Response<>(UserLoginToken.builder().token(token).build(), HttpStatus.OK));
     }
 }
