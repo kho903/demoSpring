@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -56,13 +57,16 @@ public class ApiAdminUserService {
         // 메일 전송.
         String serverURL = "http://localhost:8080";
 
+        String userAuthenticationKey = UUID.randomUUID().toString();
+
         Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("ADMIN_REGISTER");
         optionalMailTemplate.ifPresent(e -> {
             String fromEmail = e.getSendEmail();
             String fromUserName = e.getSendUserName();
             String title = e.getTitle().replaceAll("\\{USER_NAME\\}", user.getUsername());
             String contents = e.getContents().replaceAll("\\{USER_NAME\\}", user.getUsername())
-                    .replaceAll("\\{SERVER_URL\\}", serverURL);
+                    .replaceAll("\\{SERVER_URL\\}", serverURL)
+                    .replaceAll("\\{USER_AUTHENTICATION_KEY\\}", userAuthenticationKey);
 
             mailComponent.send(fromEmail, fromUserName, user.getEmail(), user.getUsername(), title, contents);
         });
