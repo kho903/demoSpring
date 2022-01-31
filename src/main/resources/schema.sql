@@ -1,5 +1,6 @@
 
 DROP TABLE IF EXISTS QNA;
+DROP TABLE IF EXISTS API_ADMIN_USER;
 
 create table QNA
 (
@@ -12,4 +13,15 @@ create table QNA
     checked         BOOLEAN,
     create_date     TIMESTAMP
 
+);
+
+create table API_ADMIN_USER
+(
+    id              BIGINT auto_increment primary key,
+    email           VARCHAR(255),
+    password        VARCHAR(255),
+    username        VARCHAR(255),
+    admin_status    VARCHAR(255),
+    create_date     TIMESTAMP,
+    update_date     TIMESTAMP
 )
