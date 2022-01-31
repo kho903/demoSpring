@@ -1,5 +1,7 @@
 package com.example.bancowdemo.adminuser.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bancowdemo.adminuser.entity.AdminStatus;
 import com.example.bancowdemo.adminuser.entity.ApiAdminUser;
 import com.example.bancowdemo.adminuser.exception.BizException;
@@ -14,7 +16,6 @@ import com.example.bancowdemo.mail.repository.MailTemplateRepository;
 import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -70,18 +71,15 @@ public class ApiAdminUserService {
         return ServiceResult.success("회원가입을 성공하였습니다.");
     }
 
-//    public ServiceResult loginUser(UserLoginInput userLoginInput) {
-//        ApiAdminUser user = apiAdminUserRepository.findByEmail(userLoginInput.getEmail())
-//                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
-//
-//        if (!PasswordUtils.equalPassword(userLoginInput.getPassword(), user.getPassword())) {
-//            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
-//        }
-//
-//        LocalDateTime expiredDatetime = LocalDateTime.now().plusMonths(1);
-//        Date expiredDate = java.sql.Timestamp.valueOf(expiredDatetime);
-//
-////        String token =
-//    }
+    public ApiAdminUser loginUser(UserLoginInput userLoginInput) {
+        ApiAdminUser user = apiAdminUserRepository.findByEmail(userLoginInput.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        if (!PasswordUtils.equalPassword(userLoginInput.getPassword(), user.getPassword())) {
+            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return user;
+    }
 
 }
