@@ -9,6 +9,7 @@ import com.example.bancowdemo.adminuser.model.UserInput;
 import com.example.bancowdemo.adminuser.model.UserLoginInput;
 import com.example.bancowdemo.adminuser.repository.ApiAdminUserRepository;
 import com.example.bancowdemo.mail.MailComponent;
+import com.example.bancowdemo.mail.entity.MailTemplate;
 import com.example.bancowdemo.mail.repository.MailTemplateRepository;
 import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.util.PasswordUtils;
@@ -52,15 +53,19 @@ public class ApiAdminUserService {
         apiAdminUserRepository.save(user);
 
         // 메일 전송.
-        String fromEmail = "smtptestkk@gmail.com";
-        String fromName = "Bancow Admin";
-        String toEmail = user.getEmail();
-        String toName = user.getUsername();
+        String serverURL = "http://localhost:8080";
 
-        String title = "회원가입을 축하드립니다.";
-        String contents = "회원가입을 축하드립니다.";
+        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("ADMIN_REGISTER");
+        optionalMailTemplate.ifPresent(e -> {
+            String fromEmail = e.getSendEmail();
+            String fromUserName = e.getSendUserName();
+            String title = e.getTitle().replaceAll("\\{USER_NAME\\}", user.getUsername());
+            String contents = e.getContents().replaceAll("\\{USER_NAME\\}", user.getUsername())
+                    .replaceAll("\\{SERVER_URL\\}", serverURL);
 
-        mailComponent.send(fromEmail, fromName, toEmail, toName, title, contents);
+            mailComponent.send(fromEmail, fromUserName, user.getEmail(), user.getUsername(), title, contents);
+        });
+
 
         return ServiceResult.success("회원가입을 성공하였습니다.");
     }

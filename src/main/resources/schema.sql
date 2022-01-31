@@ -24,4 +24,17 @@ create table API_ADMIN_USER
     admin_status    VARCHAR(255),
     create_date     TIMESTAMP,
     update_date     TIMESTAMP
-)
+);
+
+create table MAIL_TEMPLATE
+(
+    ID             BIGINT auto_increment primary key,
+    TEMPLATE_ID    VARCHAR(255),
+    TITLE          VARCHAR(255),
+    CONTENTS       VARCHAR(255),
+
+    SEND_EMAIL     VARCHAR(255),
+    SEND_USER_NAME VARCHAR(255),
+
+    REG_DATE       TIMESTAMP
+);
