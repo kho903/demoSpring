@@ -8,6 +8,8 @@ import com.example.bancowdemo.adminuser.exception.UserNotFoundException;
 import com.example.bancowdemo.adminuser.model.UserInput;
 import com.example.bancowdemo.adminuser.model.UserLoginInput;
 import com.example.bancowdemo.adminuser.repository.ApiAdminUserRepository;
+import com.example.bancowdemo.mail.MailComponent;
+import com.example.bancowdemo.mail.repository.MailTemplateRepository;
 import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ import java.util.Optional;
 public class ApiAdminUserService {
 
     private final ApiAdminUserRepository apiAdminUserRepository;
+    private final MailComponent mailComponent;
+    private final MailTemplateRepository mailTemplateRepository;
 
     public ServiceResult registerUser(UserInput userInput) {
         Optional<ApiAdminUser> optionalUser = apiAdminUserRepository.findByEmail(userInput.getEmail());
@@ -46,6 +50,17 @@ public class ApiAdminUserService {
                 .build();
 
         apiAdminUserRepository.save(user);
+
+        // 메일 전송.
+        String fromEmail = "smtptestkk@gmail.com";
+        String fromName = "Bancow Admin";
+        String toEmail = user.getEmail();
+        String toName = user.getUsername();
+
+        String title = "회원가입을 축하드립니다.";
+        String contents = "회원가입을 축하드립니다.";
+
+        mailComponent.send(fromEmail, fromName, toEmail, toName, title, contents);
 
         return ServiceResult.success("회원가입을 성공하였습니다.");
     }

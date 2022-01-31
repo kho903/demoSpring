@@ -21,3 +21,15 @@ spring:
         show-sql: true
         format_sql: true
 
+  mail:
+    username: smtptestkk@gmail.com
+    password: bancowtest1.
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
