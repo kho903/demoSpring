@@ -43,19 +43,8 @@ public class ApiAdminUserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserLoginInput userLoginInput) {
-
         ApiAdminUser user = apiAdminUserService.loginUser(userLoginInput);
-        LocalDateTime expiredDatetime = LocalDateTime.now().plusMonths(1);
-        Date expiredDate = java.sql.Timestamp.valueOf(expiredDatetime);
-
-        String token = JWT.create()
-                .withExpiresAt(expiredDate)
-                .withClaim("user_id", user.getId())
-                .withSubject(user.getUsername())
-                .withIssuer(user.getEmail())
-                .sign(Algorithm.HMAC512("bancowAlgorithm".getBytes()));
-
-        return ResponseEntity.ok().body(new Response<>(UserLoginToken.builder().token(token).build(), HttpStatus.OK));
+        return ResponseEntity.ok("로그인에 성공하였습니다.");
     }
 
     @GetMapping("/authentication/{token}")

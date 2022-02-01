@@ -1,11 +1,13 @@
 package com.example.bancowdemo.adminuser.service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bancowdemo.adminuser.entity.AdminStatus;
 import com.example.bancowdemo.adminuser.entity.ApiAdminUser;
 import com.example.bancowdemo.adminuser.exception.BizException;
@@ -72,8 +74,7 @@ public class ApiAdminUserService {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
-        String userAuthenticationKey = UUID.randomUUID().toString();
-
+        String userAuthenticationKey = makeJwtToken(user);
         Token token = Token.builder()
             .token(userAuthenticationKey)
             .user(user)
@@ -109,13 +110,12 @@ public class ApiAdminUserService {
     private void sendMail(ApiAdminUser user, String templateId) {
         String serverURL = "http://localhost:8080";
 
-        String userAuthenticationKey = UUID.randomUUID().toString();
-
+        String userAuthenticationKey = makeJwtToken(user);
         Token token = Token.builder()
-                .token(userAuthenticationKey)
-                .user(user)
-                .expiredDate(LocalDateTime.now().plusDays(1))
-                .build();
+            .token(userAuthenticationKey)
+            .user(user)
+            .expiredDate(LocalDateTime.now().plusDays(1))
+            .build();
 
         tokenRepository.save(token);
 
@@ -162,5 +162,16 @@ public class ApiAdminUserService {
             .orElseThrow(() -> new BizException("해당 정보의 유저가 존재하지 않습니다."));
         user.setAdminStatus(AdminStatus.ADMIN);
         apiAdminUserRepository.save(user);
+    }
+
+    public String makeJwtToken(ApiAdminUser user) {
+        LocalDateTime expiredDatetime = LocalDateTime.now().plusMonths(1);
+        Date expiredDate = java.sql.Timestamp.valueOf(expiredDatetime);
+        return JWT.create()
+            .withExpiresAt(expiredDate)
+            .withClaim("user_id", user.getId())
+            .withSubject(user.getUsername())
+            .withIssuer(user.getEmail())
+            .sign(Algorithm.HMAC512("bancowAlgorithm".getBytes()));
     }
 }
