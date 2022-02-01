@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,8 +26,8 @@ public class QnaApiController {
     private final QnaService qnaService;
 
     @GetMapping("/{id}")
-    public Response<?> getQna(@PathVariable Long id) {
-        Qna qna = qnaService.getQna(id);
+    public Response<?> getQna(@PathVariable Long id, @RequestHeader("TOKEN") String token) {
+        Qna qna = qnaService.getQna(token, id);
         if (qna == null) {
             return new Response<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -34,8 +35,8 @@ public class QnaApiController {
     }
 
     @GetMapping("/allqna")
-    public Response<?> getAllQna() {
-        List<Qna> allQna = qnaService.getAllQna();
+    public Response<?> getAllQna(@RequestHeader("TOKEN") String token) {
+        List<Qna> allQna = qnaService.getAllQna(token);
         return new Response<>(allQna, HttpStatus.OK);
     }
 
@@ -46,8 +47,8 @@ public class QnaApiController {
     }
 
     @DeleteMapping("/{id}")
-    public Response<?> deleteQna(@PathVariable Long id) {
-        ServiceResult result = qnaService.deleteQna(id);
+    public Response<?> deleteQna(@PathVariable Long id, @RequestHeader("TOKEN") String token) {
+        ServiceResult result = qnaService.deleteQna(token, id);
 
         if (!result.isResult()) {
             return new Response<>(result, HttpStatus.BAD_REQUEST);

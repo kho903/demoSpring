@@ -1,23 +1,33 @@
 package com.example.bancowdemo.qna.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.example.bancowdemo.adminuser.entity.AdminStatus;
+import com.example.bancowdemo.adminuser.exception.BizException;
+import com.example.bancowdemo.adminuser.repository.ApiAdminUserRepository;
 import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.qna.entity.Qna;
 import com.example.bancowdemo.qna.entity.QnaInput;
 import com.example.bancowdemo.qna.repository.QnaRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.example.bancowdemo.token.entity.Token;
+import com.example.bancowdemo.token.repository.TokenRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class QnaService {
 
     private final QnaRepository qnaRepository;
+    private final TokenRepository tokenRepository;
+    private final ApiAdminUserRepository userRepository;
 
-    public Qna getQna(Long qnaId) {
+    public Qna getQna(String token, Long qnaId) {
+        checkTokenValid(token);
         Optional<Qna> optionalQna = qnaRepository.findById(qnaId);
         if (!optionalQna.isPresent()) {
             return null;
@@ -26,7 +36,8 @@ public class QnaService {
         return qnaRepository.save(qna);
     }
 
-    public List<Qna> getAllQna() {
+    public List<Qna> getAllQna(String token) {
+        checkTokenValid(token);
         return qnaRepository.findAll();
     }
 
@@ -46,7 +57,8 @@ public class QnaService {
         return ServiceResult.success("QNA를 성공적으로 등록하였습니다.");
     }
 
-    public ServiceResult deleteQna(Long qnaId) {
+    public ServiceResult deleteQna(String token, Long qnaId) {
+        checkTokenValid(token);
         Optional<Qna> optionalQna = qnaRepository.findById(qnaId);
         if (!optionalQna.isPresent()) {
             return ServiceResult.fail("삭제할 QNA가 없습니다.");
@@ -55,5 +67,14 @@ public class QnaService {
 
         qnaRepository.delete(qna);
         return ServiceResult.success("QNA를 성공적으로 삭제하였습니다.");
+    }
+
+    private void checkTokenValid(String token) {
+        Token findToken = tokenRepository.findByToken(token)
+            .orElseThrow(() -> new BizException("Not Found Token"));
+        if (!(findToken.getUser().getAdminStatus().equals(AdminStatus.ADMIN) ||
+            findToken.getUser().getAdminStatus().equals(AdminStatus.SUPER))) {
+            throw new BizException("유저 권한이 없습니다.");
+        }
     }
 }
