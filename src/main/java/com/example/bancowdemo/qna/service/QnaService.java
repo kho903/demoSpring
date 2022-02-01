@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.bancowdemo.adminuser.entity.AdminStatus;
 import com.example.bancowdemo.adminuser.exception.BizException;
-import com.example.bancowdemo.adminuser.repository.ApiAdminUserRepository;
 import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.qna.entity.Qna;
 import com.example.bancowdemo.qna.entity.QnaInput;
@@ -24,7 +23,6 @@ public class QnaService {
 
     private final QnaRepository qnaRepository;
     private final TokenRepository tokenRepository;
-    private final ApiAdminUserRepository userRepository;
 
     public Qna getQna(String token, Long qnaId) {
         checkTokenValid(token);
