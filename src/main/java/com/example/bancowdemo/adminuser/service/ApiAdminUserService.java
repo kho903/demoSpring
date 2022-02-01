@@ -5,6 +5,8 @@ import com.example.bancowdemo.adminuser.entity.ApiAdminUser;
 import com.example.bancowdemo.adminuser.exception.BizException;
 import com.example.bancowdemo.adminuser.exception.PasswordNotMatchException;
 import com.example.bancowdemo.adminuser.exception.UserNotFoundException;
+import com.example.bancowdemo.adminuser.model.PasswordInput;
+import com.example.bancowdemo.adminuser.model.UserFindInput;
 import com.example.bancowdemo.adminuser.model.UserInput;
 import com.example.bancowdemo.adminuser.model.UserLoginInput;
 import com.example.bancowdemo.adminuser.repository.ApiAdminUserRepository;
@@ -97,6 +99,55 @@ public class ApiAdminUserService {
         String email = findToken.getUser().getEmail();
         ApiAdminUser user = apiAdminUserRepository.findByEmail(email).orElseThrow(() -> new BizException("User Not Found"));
         user.setAdminStatus(AdminStatus.PENDING_SUPER);
+        apiAdminUserRepository.save(user);
+    }
+
+    public void findManager(UserFindInput userFindInput) {
+        Optional<ApiAdminUser> optionalUser = apiAdminUserRepository.findByEmail(userFindInput.getEmail());
+        if (optionalUser.isEmpty()) {
+            throw new BizException("존재하지 않는 이메일입니다.");
+        }
+        ApiAdminUser user = optionalUser.get();
+        if (!user.getUsername().equals(userFindInput.getUsername())) {
+            throw new BizException("회원정보가 틀립니다.");
+        }
+
+        String serverURL = "http://localhost:8080";
+
+        String userAuthenticationKey = UUID.randomUUID().toString();
+        Token token = new Token();
+        token.setToken(userAuthenticationKey);
+        token.setUser(user);
+        token.setExpiredDate(LocalDateTime.now().plusDays(1));
+        tokenRepository.save(token);
+
+        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("FIND_MANAGER");
+        optionalMailTemplate.ifPresent(e -> {
+            String fromEmail = e.getSendEmail();
+            String fromUserName = e.getSendUserName();
+            String title = e.getTitle().replaceAll("\\{USER_NAME\\}", user.getUsername());
+            String contents = e.getContents().replaceAll("\\{USER_NAME\\}", user.getUsername())
+                    .replaceAll("\\{SERVER_URL\\}", serverURL)
+                    .replaceAll("\\{USER_AUTHENTICATION_KEY\\}", userAuthenticationKey);
+
+            mailComponent.send(fromEmail, fromUserName, user.getEmail(), user.getUsername(), title, contents);
+        });
+    }
+
+    public ApiAdminUser authenticationPassword(String token) {
+        Token findToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new BizException("Not Found Token"));
+        String email = findToken.getUser().getEmail();
+        return apiAdminUserRepository.findByEmail(email).orElseThrow(() -> new BizException("User Not Found"));
+    }
+
+    public void changePassword(String token, PasswordInput passwordInput) {
+        ApiAdminUser user = authenticationPassword(token);
+        if (!passwordInput.getPassword1().equals(passwordInput.getPassword2())) {
+            throw new BizException("비밀번호1, 2가 일치하지 않습니다.");
+        }
+        String encryptPassword = PasswordUtils.encryptedPassword(passwordInput.getPassword1());
+        user.setPassword(encryptPassword);
         apiAdminUserRepository.save(user);
     }
 }

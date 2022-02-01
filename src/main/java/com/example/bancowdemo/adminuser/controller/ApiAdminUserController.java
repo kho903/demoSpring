@@ -3,6 +3,8 @@ package com.example.bancowdemo.adminuser.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bancowdemo.adminuser.entity.ApiAdminUser;
+import com.example.bancowdemo.adminuser.model.PasswordInput;
+import com.example.bancowdemo.adminuser.model.UserFindInput;
 import com.example.bancowdemo.adminuser.model.UserInput;
 import com.example.bancowdemo.adminuser.model.UserLoginInput;
 import com.example.bancowdemo.adminuser.model.UserLoginToken;
@@ -14,16 +16,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Controller
+@RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ApiAdminUserController {
@@ -59,4 +64,23 @@ public class ApiAdminUserController {
         apiAdminUserService.authentication(token);
         return ResponseEntity.ok("인증에 성공하였습니다.");
     }
+
+    @PostMapping("/findmanager")
+    public ResponseEntity<?> findManager(@RequestBody @Valid UserFindInput userFindInput) {
+        apiAdminUserService.findManager(userFindInput);
+        return ResponseEntity.ok("이메일로 비밀번호 초기화 메시지가 발송되었습니다.");
+    }
+
+    @GetMapping("/authentication/findmanager/{token}")
+    public ResponseEntity<?> authenticationPassword(@PathVariable String token) {
+        apiAdminUserService.authenticationPassword(token);
+        return ResponseEntity.ok("인증에 성공하였습니다.");
+    }
+
+    @PatchMapping("/authentication/findmanager/{token}")
+    public ResponseEntity<?> changePassword(@PathVariable String token, @RequestBody @Valid PasswordInput passwordInput) {
+        apiAdminUserService.changePassword(token, passwordInput);
+        return ResponseEntity.ok("비밀번호 변경에 성공하였습니다.");
+    }
+
 }

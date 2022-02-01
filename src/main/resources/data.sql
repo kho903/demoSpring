@@ -9,5 +9,9 @@ INSERT INTO MAIL_TEMPLATE(ID, TEMPLATE_ID, TITLE, CONTENTS, SEND_EMAIL, SEND_USE
 VALUES
 (1, 'ADMIN_REGISTER', '{USER_NAME} 님의 회원가입 인증 이메일입니다.',
  '<div><p>{USER_NAME} 님 안녕하세요.</p><p>아래 링크를 클릭하여 인증을 완료하여 주세요.</p><p><a href="{SERVER_URL}/api/authentication/{USER_AUTHENTICATION_KEY}">인증하기</a></p></div>',
+ 'test@naver.com', '관리자', '2022-01-01 00:00:00.000000'),
+(2, 'FIND_MANAGER', '{USER_NAME} 님의 회원정보 찾기 이메일 입니다.',
+ '<div><p>{USER_NAME} 님 안녕하세요.</p><p>아래 링크를 클릭하여 비밀번호를 초기화 하여 주세요.</p><p><a href="{SERVER_URL}/api/findManager/{USER_AUTHENTICATION_KEY}">인증하기</a></p></div>',
  'test@naver.com', '관리자', '2022-01-01 00:00:00.000000');
+
 
