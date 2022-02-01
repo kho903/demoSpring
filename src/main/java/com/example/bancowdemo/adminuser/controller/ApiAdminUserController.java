@@ -1,17 +1,7 @@
 package com.example.bancowdemo.adminuser.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.example.bancowdemo.adminuser.entity.ApiAdminUser;
-import com.example.bancowdemo.adminuser.model.PasswordInput;
-import com.example.bancowdemo.adminuser.model.UserFindInput;
-import com.example.bancowdemo.adminuser.model.UserInput;
-import com.example.bancowdemo.adminuser.model.UserLoginInput;
-import com.example.bancowdemo.adminuser.model.UserLoginToken;
-import com.example.bancowdemo.adminuser.service.ApiAdminUserService;
-import com.example.bancowdemo.qna.ServiceResult;
-import com.example.bancowdemo.response.Response;
-import lombok.RequiredArgsConstructor;
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.Date;
+import com.example.bancowdemo.adminuser.model.PasswordInput;
+import com.example.bancowdemo.adminuser.model.UserFindInput;
+import com.example.bancowdemo.adminuser.model.UserInput;
+import com.example.bancowdemo.adminuser.model.UserLoginInput;
+import com.example.bancowdemo.adminuser.service.ApiAdminUserService;
+import com.example.bancowdemo.qna.ServiceResult;
+import com.example.bancowdemo.response.Response;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api")
@@ -43,37 +39,37 @@ public class ApiAdminUserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserLoginInput userLoginInput) {
-        ApiAdminUser user = apiAdminUserService.loginUser(userLoginInput);
-        return ResponseEntity.ok("로그인에 성공하였습니다.");
+        ServiceResult result = apiAdminUserService.loginUser(userLoginInput);
+        return ResponseEntity.ok().body(new Response<>(result, HttpStatus.OK));
     }
 
     @GetMapping("/authentication/{token}")
     public ResponseEntity<?> authentication(@PathVariable String token) {
-        apiAdminUserService.authentication(token);
-        return ResponseEntity.ok("인증에 성공하였습니다.");
+        ServiceResult result = apiAdminUserService.authentication(token);
+        return ResponseEntity.ok().body(new Response<>(result, HttpStatus.OK));
     }
 
     @PostMapping("/findmanager")
     public ResponseEntity<?> findManager(@RequestBody @Valid UserFindInput userFindInput) {
-        apiAdminUserService.findManager(userFindInput);
-        return ResponseEntity.ok("이메일로 비밀번호 초기화 메시지가 발송되었습니다.");
+        ServiceResult result = apiAdminUserService.findManager(userFindInput);
+        return ResponseEntity.ok().body(new Response<>(result, HttpStatus.OK));
     }
 
     @GetMapping("/authentication/findmanager/{token}")
     public ResponseEntity<?> authenticationPassword(@PathVariable String token) {
         apiAdminUserService.authenticationPassword(token);
-        return ResponseEntity.ok("인증에 성공하였습니다.");
+        return ResponseEntity.ok().body(new Response<>("비밀번호 변경을 위한 인증에 성공하였습니다.", HttpStatus.OK));
     }
 
     @PatchMapping("/authentication/findmanager/{token}")
     public ResponseEntity<?> changePassword(@PathVariable String token, @RequestBody @Valid PasswordInput passwordInput) {
-        apiAdminUserService.changePassword(token, passwordInput);
-        return ResponseEntity.ok("비밀번호 변경에 성공하였습니다.");
+        ServiceResult result = apiAdminUserService.changePassword(token, passwordInput);
+        return ResponseEntity.ok().body(new Response<>(result, HttpStatus.OK));
     }
 
     @PatchMapping("/status-to-admin/{token}")
     public ResponseEntity<?> statusToAdmin(@PathVariable String token, @RequestParam Long id) {
-        apiAdminUserService.makeAdmin(token, id);
-        return ResponseEntity.ok("해당 계정을 ADMIN 상태로 변경에 성공하였습니다.");
+        ServiceResult result = apiAdminUserService.makeAdmin(token, id);
+        return ResponseEntity.ok().body(new Response<>(result, HttpStatus.OK));
     }
 }

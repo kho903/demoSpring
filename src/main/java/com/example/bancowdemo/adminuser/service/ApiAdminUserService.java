@@ -66,7 +66,7 @@ public class ApiAdminUserService {
         return ServiceResult.success("회원가입을 성공하였습니다.");
     }
 
-    public ApiAdminUser loginUser(UserLoginInput userLoginInput) {
+    public ServiceResult loginUser(UserLoginInput userLoginInput) {
         ApiAdminUser user = apiAdminUserRepository.findByEmail(userLoginInput.getEmail())
             .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
@@ -81,20 +81,24 @@ public class ApiAdminUserService {
             .expiredDate(LocalDateTime.now().plusDays(1))
             .build();
         tokenRepository.save(token);
-        return user;
+        // return user;
+        return ServiceResult.success(user.getUsername() + " 님의 로그인에 성공하였습니다.");
     }
 
-    public void authentication(String token) {
+    public ServiceResult authentication(String token) {
         Token findToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new BizException("Not Found Token"));
+            .orElseThrow(() -> new BizException("Not Found Token"));
         String email = findToken.getUser().getEmail();
-        ApiAdminUser user = apiAdminUserRepository.findByEmail(email).orElseThrow(() -> new BizException("User Not Found"));
+        ApiAdminUser user = apiAdminUserRepository.findByEmail(email)
+            .orElseThrow(() -> new BizException("User Not Found"));
         user.setAdminStatus(AdminStatus.PENDING_SUPER);
         apiAdminUserRepository.save(user);
         tokenRepository.delete(findToken);
+
+        return ServiceResult.success(user.getUsername() + " 님의 인증에 성공하였습니다.");
     }
 
-    public void findManager(UserFindInput userFindInput) {
+    public ServiceResult findManager(UserFindInput userFindInput) {
         Optional<ApiAdminUser> optionalUser = apiAdminUserRepository.findByEmail(userFindInput.getEmail());
         if (optionalUser.isEmpty()) {
             throw new BizException("존재하지 않는 이메일입니다.");
@@ -105,6 +109,7 @@ public class ApiAdminUserService {
         }
 
         sendMail(user, "FIND_MANAGER");
+        return ServiceResult.success(user.getUsername() + " 님의 이메일로 비밀번호 초기화 메시지가 발송되었습니다.");
     }
 
     private void sendMail(ApiAdminUser user, String templateId) {
@@ -140,7 +145,7 @@ public class ApiAdminUserService {
         return apiAdminUserRepository.findByEmail(email).orElseThrow(() -> new BizException("User Not Found"));
     }
 
-    public void changePassword(String token, PasswordInput passwordInput) {
+    public ServiceResult changePassword(String token, PasswordInput passwordInput) {
         ApiAdminUser user = authenticationPassword(token);
         if (!passwordInput.getPassword1().equals(passwordInput.getPassword2())) {
             throw new BizException("비밀번호1, 2가 일치하지 않습니다.");
@@ -148,9 +153,11 @@ public class ApiAdminUserService {
         String encryptPassword = PasswordUtils.encryptedPassword(passwordInput.getPassword1());
         user.setPassword(encryptPassword);
         apiAdminUserRepository.save(user);
+
+        return ServiceResult.success(user.getUsername() + " 님의 비밀번호 변경에 성공하였습니다.");
     }
 
-    public void makeAdmin(String token, Long id) {
+    public ServiceResult makeAdmin(String token, Long id) {
         Token findToken = tokenRepository.findByToken(token)
             .orElseThrow(() -> new BizException("토큰 정보를 찾을 수 없습니다."));
         AdminStatus userStatus = findToken.getUser().getAdminStatus();
@@ -162,6 +169,8 @@ public class ApiAdminUserService {
             .orElseThrow(() -> new BizException("해당 정보의 유저가 존재하지 않습니다."));
         user.setAdminStatus(AdminStatus.ADMIN);
         apiAdminUserRepository.save(user);
+
+        return ServiceResult.success(user.getUsername() + " 님의 상태를 ADMIN으로 변경하였습니다.");
     }
 
     public String makeJwtToken(ApiAdminUser user) {
