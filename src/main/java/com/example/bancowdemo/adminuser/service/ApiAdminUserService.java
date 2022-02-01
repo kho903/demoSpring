@@ -14,12 +14,13 @@ import com.example.bancowdemo.mail.MailComponent;
 import com.example.bancowdemo.mail.entity.MailTemplate;
 import com.example.bancowdemo.mail.repository.MailTemplateRepository;
 import com.example.bancowdemo.qna.ServiceResult;
+import com.example.bancowdemo.token.entity.Token;
+import com.example.bancowdemo.token.repository.TokenRepository;
 import com.example.bancowdemo.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +31,7 @@ public class ApiAdminUserService {
     private final ApiAdminUserRepository apiAdminUserRepository;
     private final MailComponent mailComponent;
     private final MailTemplateRepository mailTemplateRepository;
+    private final TokenRepository tokenRepository;
 
     public ServiceResult registerUser(UserInput userInput) {
         Optional<ApiAdminUser> optionalUser = apiAdminUserRepository.findByEmail(userInput.getEmail());
@@ -58,6 +60,11 @@ public class ApiAdminUserService {
         String serverURL = "http://localhost:8080";
 
         String userAuthenticationKey = UUID.randomUUID().toString();
+        Token token = new Token();
+        token.setToken(userAuthenticationKey);
+        token.setUser(user);
+        token.setExpiredDate(LocalDateTime.now().plusDays(1));
+        tokenRepository.save(token);
 
         Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("ADMIN_REGISTER");
         optionalMailTemplate.ifPresent(e -> {
@@ -86,4 +93,13 @@ public class ApiAdminUserService {
         return user;
     }
 
+    public void authentication(String token) {
+        System.out.println("sdfklsdmnf");
+        Token findToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new BizException("Not Found Token"));
+        String email = findToken.getUser().getEmail();
+        ApiAdminUser user = apiAdminUserRepository.findByEmail(email).orElseThrow(() -> new BizException("User Not Found"));
+        user.setAdminStatus(AdminStatus.PENDING_SUPER);
+        apiAdminUserRepository.save(user);
+    }
 }

@@ -38,3 +38,13 @@ create table MAIL_TEMPLATE
 
     REG_DATE       TIMESTAMP
 );
+
+create table TOKEN
+(
+    id              BIGINT auto_increment primary key,
+    token           VARCHAR(255),
+    user_id         BIGINT,
+    expired_date     TIMESTAMP,
+
+    constraint FK_TOKEN_USER_ID foreign key (USER_ID) references API_ADMIN_USER (ID)
+);
