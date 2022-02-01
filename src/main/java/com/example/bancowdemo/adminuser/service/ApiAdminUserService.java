@@ -57,27 +57,7 @@ public class ApiAdminUserService {
         apiAdminUserRepository.save(user);
 
         // 메일 전송.
-        String serverURL = "http://localhost:8080";
-
-        String userAuthenticationKey = UUID.randomUUID().toString();
-        Token token = new Token();
-        token.setToken(userAuthenticationKey);
-        token.setUser(user);
-        token.setExpiredDate(LocalDateTime.now().plusDays(1));
-        tokenRepository.save(token);
-
-        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("ADMIN_REGISTER");
-        optionalMailTemplate.ifPresent(e -> {
-            String fromEmail = e.getSendEmail();
-            String fromUserName = e.getSendUserName();
-            String title = e.getTitle().replaceAll("\\{USER_NAME\\}", user.getUsername());
-            String contents = e.getContents().replaceAll("\\{USER_NAME\\}", user.getUsername())
-                    .replaceAll("\\{SERVER_URL\\}", serverURL)
-                    .replaceAll("\\{USER_AUTHENTICATION_KEY\\}", userAuthenticationKey);
-
-            mailComponent.send(fromEmail, fromUserName, user.getEmail(), user.getUsername(), title, contents);
-        });
-
+        sendMail(user, "ADMIN_REGISTER");
 
         return ServiceResult.success("회원가입을 성공하였습니다.");
     }
@@ -112,16 +92,23 @@ public class ApiAdminUserService {
             throw new BizException("회원정보가 틀립니다.");
         }
 
+        sendMail(user, "FIND_MANAGER");
+    }
+
+    private void sendMail(ApiAdminUser user, String templateId) {
         String serverURL = "http://localhost:8080";
 
         String userAuthenticationKey = UUID.randomUUID().toString();
-        Token token = new Token();
-        token.setToken(userAuthenticationKey);
-        token.setUser(user);
-        token.setExpiredDate(LocalDateTime.now().plusDays(1));
+
+        Token token = Token.builder()
+                .token(userAuthenticationKey)
+                .user(user)
+                .expiredDate(LocalDateTime.now().plusDays(1))
+                .build();
+
         tokenRepository.save(token);
 
-        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("FIND_MANAGER");
+        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId(templateId);
         optionalMailTemplate.ifPresent(e -> {
             String fromEmail = e.getSendEmail();
             String fromUserName = e.getSendUserName();
