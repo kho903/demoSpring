@@ -42,7 +42,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation ("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation ("org.springframework.restdocs:spring-security-test")
+    testImplementation("org.springframework.security:spring-security-test:5.6.1")
 
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 
