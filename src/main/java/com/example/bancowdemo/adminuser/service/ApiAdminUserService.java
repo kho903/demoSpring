@@ -1,5 +1,11 @@
 package com.example.bancowdemo.adminuser.service;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import com.example.bancowdemo.adminuser.entity.AdminStatus;
 import com.example.bancowdemo.adminuser.entity.ApiAdminUser;
 import com.example.bancowdemo.adminuser.exception.BizException;
@@ -17,12 +23,8 @@ import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.token.entity.Token;
 import com.example.bancowdemo.token.repository.TokenRepository;
 import com.example.bancowdemo.util.PasswordUtils;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -64,12 +66,20 @@ public class ApiAdminUserService {
 
     public ApiAdminUser loginUser(UserLoginInput userLoginInput) {
         ApiAdminUser user = apiAdminUserRepository.findByEmail(userLoginInput.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         if (!PasswordUtils.equalPassword(userLoginInput.getPassword(), user.getPassword())) {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
+        String userAuthenticationKey = UUID.randomUUID().toString();
+
+        Token token = Token.builder()
+            .token(userAuthenticationKey)
+            .user(user)
+            .expiredDate(LocalDateTime.now().plusDays(1))
+            .build();
+        tokenRepository.save(token);
         return user;
     }
 
@@ -80,6 +90,7 @@ public class ApiAdminUserService {
         ApiAdminUser user = apiAdminUserRepository.findByEmail(email).orElseThrow(() -> new BizException("User Not Found"));
         user.setAdminStatus(AdminStatus.PENDING_SUPER);
         apiAdminUserRepository.save(user);
+        tokenRepository.delete(findToken);
     }
 
     public void findManager(UserFindInput userFindInput) {
@@ -125,6 +136,7 @@ public class ApiAdminUserService {
         Token findToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new BizException("Not Found Token"));
         String email = findToken.getUser().getEmail();
+        tokenRepository.delete(findToken);
         return apiAdminUserRepository.findByEmail(email).orElseThrow(() -> new BizException("User Not Found"));
     }
 
@@ -135,6 +147,20 @@ public class ApiAdminUserService {
         }
         String encryptPassword = PasswordUtils.encryptedPassword(passwordInput.getPassword1());
         user.setPassword(encryptPassword);
+        apiAdminUserRepository.save(user);
+    }
+
+    public void makeAdmin(String token, Long id) {
+        Token findToken = tokenRepository.findByToken(token)
+            .orElseThrow(() -> new BizException("토큰 정보를 찾을 수 없습니다."));
+        AdminStatus userStatus = findToken.getUser().getAdminStatus();
+        if (!userStatus.equals(AdminStatus.SUPER)) {
+            throw new BizException("슈퍼 계정이 아닙니다.");
+        }
+
+        ApiAdminUser user = apiAdminUserRepository.findById(id)
+            .orElseThrow(() -> new BizException("해당 정보의 유저가 존재하지 않습니다."));
+        user.setAdminStatus(AdminStatus.ADMIN);
         apiAdminUserRepository.save(user);
     }
 }

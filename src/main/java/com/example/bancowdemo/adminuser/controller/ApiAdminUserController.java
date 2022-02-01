@@ -14,14 +14,13 @@ import com.example.bancowdemo.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -83,4 +82,9 @@ public class ApiAdminUserController {
         return ResponseEntity.ok("비밀번호 변경에 성공하였습니다.");
     }
 
+    @PatchMapping("/status-to-admin/{token}")
+    public ResponseEntity<?> statusToAdmin(@PathVariable String token, @RequestParam Long id) {
+        apiAdminUserService.makeAdmin(token, id);
+        return ResponseEntity.ok("해당 계정을 ADMIN 상태로 변경에 성공하였습니다.");
+    }
 }

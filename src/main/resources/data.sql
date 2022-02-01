@@ -14,4 +14,8 @@ VALUES
  '<div><p>{USER_NAME} 님 안녕하세요.</p><p>아래 링크를 클릭하여 비밀번호를 초기화 하여 주세요.</p><p><a href="{SERVER_URL}/api/findManager/{USER_AUTHENTICATION_KEY}">인증하기</a></p></div>',
  'test@naver.com', '관리자', '2022-01-01 00:00:00.000000');
 
-
+INSERT INTO API_ADMIN_USER(id, email, password, username, admin_status, create_date, update_date)
+values
+(1, 'smtptestkk@gmail.com',
+ '$2a$10$YRVBdAXQFY9eR7Tyf9XWa.e.R/OdF.c82XtUaAapBn/SuwLqLN/tm',
+ '김지훈', 'SUPER', '2022-01-01 00:02:00.000000', '2022-01-01 00:02:00.000000');
