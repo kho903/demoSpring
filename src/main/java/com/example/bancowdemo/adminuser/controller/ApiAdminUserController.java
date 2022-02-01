@@ -10,7 +10,6 @@ import com.example.bancowdemo.adminuser.service.ApiAdminUserService;
 import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.response.Response;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -28,7 +26,6 @@ import java.util.Date;
 @Controller
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@Slf4j
 public class ApiAdminUserController {
 
     private final ApiAdminUserService apiAdminUserService;
@@ -60,7 +57,6 @@ public class ApiAdminUserController {
     @GetMapping("/authentication/{token}")
     public ResponseEntity<?> authentication(@PathVariable String token) {
         apiAdminUserService.authentication(token);
-        log.info("인증 중입니다. {}", token);
         return ResponseEntity.ok("인증에 성공하였습니다.");
     }
 }

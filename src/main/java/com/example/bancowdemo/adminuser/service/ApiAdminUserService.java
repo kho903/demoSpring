@@ -1,7 +1,5 @@
 package com.example.bancowdemo.adminuser.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bancowdemo.adminuser.entity.AdminStatus;
 import com.example.bancowdemo.adminuser.entity.ApiAdminUser;
 import com.example.bancowdemo.adminuser.exception.BizException;
@@ -94,7 +92,6 @@ public class ApiAdminUserService {
     }
 
     public void authentication(String token) {
-        System.out.println("sdfklsdmnf");
         Token findToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new BizException("Not Found Token"));
         String email = findToken.getUser().getEmail();
