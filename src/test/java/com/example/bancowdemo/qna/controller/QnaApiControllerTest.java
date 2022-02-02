@@ -1,28 +1,45 @@
 package com.example.bancowdemo.qna.controller;
 
-import com.example.bancowdemo.TestSupport;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.example.bancowdemo.TestSupport;
+import com.example.bancowdemo.adminuser.model.UserLoginInput;
+import com.example.bancowdemo.adminuser.service.ApiAdminUserService;
+import com.example.bancowdemo.util.token.entity.Token;
+import com.example.bancowdemo.util.token.repository.TokenRepository;
 
 class QnaApiControllerTest extends TestSupport {
 
+    @Autowired
+    private ApiAdminUserService apiAdminUserService;
+
+    @Autowired
+    private TokenRepository tokenRepository;
+
+    @BeforeEach
+    void userSet() {
+        apiAdminUserService.loginUser(
+            new UserLoginInput("smtptestkk@gmail.com", "1111")
+        );
+    }
+
     @Test
     void getQna() throws Exception {
+        Token token = tokenRepository.findByUserId(1L).get();
         mockMvc.perform(
-                get("/api/qna/{id}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
+            get("/api/qna/{id}", 1L)
+                .header("TOKEN", token.getToken())
+                .accept(MediaType.APPLICATION_JSON)
         )
-                .andExpect(status().isOk())
+            .andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
                                 pathParameters(
@@ -46,9 +63,11 @@ class QnaApiControllerTest extends TestSupport {
 
     @Test
     void getAllQna() throws Exception {
+        Token token = tokenRepository.findByUserId(1L).get();
         mockMvc.perform(
-                get("/api/qna/allqna")
-                        .contentType(MediaType.APPLICATION_JSON)
+            get("/api/qna/allqna")
+                .header("TOKEN", token.getToken())
+                .accept(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isOk())
                 .andDo(
@@ -109,9 +128,11 @@ class QnaApiControllerTest extends TestSupport {
 
     @Test
     void deleteQna() throws Exception {
+        Token token = tokenRepository.findByUserId(1L).get();
         mockMvc.perform(
-                delete("/api/qna/{id}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
+            delete("/api/qna/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("TOKEN", token.getToken())
         )
                 .andExpect(status().isOk())
                 .andDo(
