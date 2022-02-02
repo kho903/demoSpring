@@ -1,7 +1,9 @@
 package com.example.bancowdemo.adminuser.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import com.example.bancowdemo.adminuser.entity.ApiAdminUser;
 import com.example.bancowdemo.adminuser.exception.BizException;
 import com.example.bancowdemo.adminuser.exception.PasswordNotMatchException;
 import com.example.bancowdemo.adminuser.exception.UserNotFoundException;
+import com.example.bancowdemo.adminuser.model.ApiAdminUserDto;
 import com.example.bancowdemo.adminuser.model.PasswordInput;
 import com.example.bancowdemo.adminuser.model.UserFindInput;
 import com.example.bancowdemo.adminuser.model.UserInput;
@@ -190,5 +193,31 @@ public class ApiAdminUserService {
         String username = findToken.getUser().getUsername();
         tokenRepository.delete(findToken);
         return ServiceResult.success(username + " 님의 로그아웃에 성공하였습니다.");
+    }
+
+    public List<ApiAdminUserDto> findAllManager(String token) {
+        checkTokenValid(token);
+        List<ApiAdminUser> all = apiAdminUserRepository.findAll();
+        List<ApiAdminUserDto> ret = new ArrayList<>();
+        for (ApiAdminUser apiAdminUser : all) {
+            ApiAdminUserDto dto = ApiAdminUserDto.builder()
+                .email(apiAdminUser.getEmail())
+                .username(apiAdminUser.getUsername())
+                .adminStatus(apiAdminUser.getAdminStatus())
+                .createDate(apiAdminUser.getCreateDate())
+                .updateDate(apiAdminUser.getUpdateDate())
+                .build();
+            ret.add(dto);
+        }
+        return ret;
+    }
+
+    private void checkTokenValid(String token) {
+        Token findToken = tokenRepository.findByToken(token)
+            .orElseThrow(() -> new BizException("Not Found Token"));
+        if (!(findToken.getUser().getAdminStatus().equals(AdminStatus.ADMIN) ||
+            findToken.getUser().getAdminStatus().equals(AdminStatus.SUPER))) {
+            throw new BizException("유저 권한이 없습니다.");
+        }
     }
 }
