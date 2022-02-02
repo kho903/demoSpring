@@ -18,13 +18,13 @@ import com.example.bancowdemo.adminuser.model.UserFindInput;
 import com.example.bancowdemo.adminuser.model.UserInput;
 import com.example.bancowdemo.adminuser.model.UserLoginInput;
 import com.example.bancowdemo.adminuser.repository.ApiAdminUserRepository;
+import com.example.bancowdemo.qna.ServiceResult;
+import com.example.bancowdemo.util.PasswordUtils;
 import com.example.bancowdemo.util.mail.MailComponent;
 import com.example.bancowdemo.util.mail.entity.MailTemplate;
 import com.example.bancowdemo.util.mail.repository.MailTemplateRepository;
-import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.util.token.entity.Token;
 import com.example.bancowdemo.util.token.repository.TokenRepository;
-import com.example.bancowdemo.util.PasswordUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -182,5 +182,13 @@ public class ApiAdminUserService {
             .withSubject(user.getUsername())
             .withIssuer(user.getEmail())
             .sign(Algorithm.HMAC512("bancowAlgorithm".getBytes()));
+    }
+
+    public ServiceResult logoutUser(String token) {
+        Token findToken = tokenRepository.findByToken(token)
+            .orElseThrow(() -> new BizException("토큰 정보를 찾을 수 없습니다."));
+        String username = findToken.getUser().getUsername();
+        tokenRepository.delete(findToken);
+        return ServiceResult.success(username + " 님의 로그아웃에 성공하였습니다.");
     }
 }
