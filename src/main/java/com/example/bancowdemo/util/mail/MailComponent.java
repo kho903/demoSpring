@@ -1,4 +1,4 @@
-package com.example.bancowdemo.mail;
+package com.example.bancowdemo.util.mail;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

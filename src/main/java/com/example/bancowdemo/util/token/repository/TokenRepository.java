@@ -1,6 +1,7 @@
-package com.example.bancowdemo.token.repository;
+package com.example.bancowdemo.util.token.repository;
 
-import com.example.bancowdemo.token.entity.Token;
+import com.example.bancowdemo.util.token.entity.Token;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

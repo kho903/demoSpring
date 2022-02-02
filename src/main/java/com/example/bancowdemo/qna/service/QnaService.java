@@ -12,8 +12,8 @@ import com.example.bancowdemo.qna.ServiceResult;
 import com.example.bancowdemo.qna.entity.Qna;
 import com.example.bancowdemo.qna.entity.QnaInput;
 import com.example.bancowdemo.qna.repository.QnaRepository;
-import com.example.bancowdemo.token.entity.Token;
-import com.example.bancowdemo.token.repository.TokenRepository;
+import com.example.bancowdemo.util.token.entity.Token;
+import com.example.bancowdemo.util.token.repository.TokenRepository;
 
 import lombok.RequiredArgsConstructor;
 

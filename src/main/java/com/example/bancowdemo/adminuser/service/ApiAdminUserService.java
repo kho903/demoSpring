@@ -18,12 +18,12 @@ import com.example.bancowdemo.adminuser.model.UserFindInput;
 import com.example.bancowdemo.adminuser.model.UserInput;
 import com.example.bancowdemo.adminuser.model.UserLoginInput;
 import com.example.bancowdemo.adminuser.repository.ApiAdminUserRepository;
-import com.example.bancowdemo.mail.MailComponent;
-import com.example.bancowdemo.mail.entity.MailTemplate;
-import com.example.bancowdemo.mail.repository.MailTemplateRepository;
+import com.example.bancowdemo.util.mail.MailComponent;
+import com.example.bancowdemo.util.mail.entity.MailTemplate;
+import com.example.bancowdemo.util.mail.repository.MailTemplateRepository;
 import com.example.bancowdemo.qna.ServiceResult;
-import com.example.bancowdemo.token.entity.Token;
-import com.example.bancowdemo.token.repository.TokenRepository;
+import com.example.bancowdemo.util.token.entity.Token;
+import com.example.bancowdemo.util.token.repository.TokenRepository;
 import com.example.bancowdemo.util.PasswordUtils;
 
 import lombok.RequiredArgsConstructor;
