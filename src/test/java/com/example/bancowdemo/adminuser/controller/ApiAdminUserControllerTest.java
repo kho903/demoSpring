@@ -1,19 +1,19 @@
 package com.example.bancowdemo.adminuser.controller;
 
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import com.example.bancowdemo.TestSupport;
-
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ApiAdminUserControllerTest extends TestSupport {
 
 	@Test
 	void registerUser() throws Exception {
 		mockMvc.perform(
-			post("/api/register", 1L)
+			post("/api/register")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(
 					"{\n"
@@ -28,6 +28,16 @@ class ApiAdminUserControllerTest extends TestSupport {
 
 	@Test
 	void login() throws Exception {
+		mockMvc.perform(
+			post("/api/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(
+					"{\n"
+						+ "  \"email\": \"smtptestkk@gmail.com\",\n"
+						+ "  \"password\": \"1111\"\n"
+						+ "}"
+				)
+		).andExpect(status().isOk());
 	}
 
 	@Test
